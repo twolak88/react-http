@@ -8,7 +8,8 @@ import axios from 'axios';
 class Blog extends Component {
   state = {
     posts: [],
-    selectedPostId: null
+    selectedPostId: null,
+    error: false
   }
 
   componentDidMount() {
@@ -25,7 +26,13 @@ class Blog extends Component {
         this.setState({
           posts: updatedPosts
         });
-      });
+      })
+      .catch(error => {
+        // console.log(error);
+        this.setState({
+          error: true
+        })
+      });;
   }
 
   postSelectedHandler = (id) => {
@@ -35,13 +42,18 @@ class Blog extends Component {
   }
 
   render() {
-    const posts = this.state.posts.map(post => {
-      return <Post 
-              key={post.id} 
-              title={post.title}
-              author={post.author}
-              clicked={() => this.postSelectedHandler(post.id)}/>
-    });
+    let posts;
+    if (!this.state.error) {
+      posts = this.state.posts.map(post => {
+        return <Post 
+                key={post.id} 
+                title={post.title}
+                author={post.author}
+                clicked={() => this.postSelectedHandler(post.id)}/>
+      });
+    } else {
+      posts = <p style={{textAlign: 'center', color: 'red'}}>Something went wrong</p>
+    }
     return (
       <div>
         <section className={classes.Posts}>
